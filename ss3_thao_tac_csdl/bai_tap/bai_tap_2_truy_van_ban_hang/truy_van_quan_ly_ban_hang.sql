@@ -78,3 +78,12 @@ ifnull(c.name,"Không rõ") as customer_name,
 ifnull(o.order_id,"Chưa mua hàng") as order_info
 from customers c
 left join orders o on c.customer_id = o.customer_id;
+
+-- Hiển thị mã hóa đơn, ngày bán và giá tiền của từng hóa đơn
+-- (giá một hóa đơn được tính bằng tổng giá bán của từng loại mặt hàng xuất hiện trong hóa đơn. Giá bán của từng loại được tính = odQTY*pPrice)
+
+select o.order_id, o.order_date, sum( od.order_quantity * p.price) as "total price"
+from orders o
+join order_detail od on o.order_id = od.order_id
+join product p on od.product_id = p.product_id
+group by o.order_id, o.order_date;
