@@ -2,110 +2,121 @@ create database quan_ly_khu_nghi_duong_furama;
 
 use quan_ly_khu_nghi_duong_furama;
 
-create table vi_tri(
-ma_vi_tri int auto_increment primary key,
-ten_vi_tri varchar(45)
+CREATE TABLE vi_tri (
+    ma_vi_tri INT AUTO_INCREMENT PRIMARY KEY,
+    ten_vi_tri VARCHAR(45)
 );
 
-create table trinh_do(
-ma_trinh_do int auto_increment primary key,
-ten_trinh_do varchar(45)
+CREATE TABLE trinh_do (
+    ma_trinh_do INT AUTO_INCREMENT PRIMARY KEY,
+    ten_trinh_do VARCHAR(45)
 );
 
-create table bo_phan(
-ma_bo_phan int auto_increment primary key,
-ten_bo_phan varchar(45)
+CREATE TABLE bo_phan (
+    ma_bo_phan INT AUTO_INCREMENT PRIMARY KEY,
+    ten_bo_phan VARCHAR(45)
 );
 
-create table loai_khach(
-ma_loai_khach int auto_increment primary key,
-ten_loai_khach varchar(45)
+CREATE TABLE loai_khach (
+    ma_loai_khach INT AUTO_INCREMENT PRIMARY KEY,
+    ten_loai_khach VARCHAR(45)
 );
 
-create table loai_dich_vu(
-ma_loai_dich_vu int auto_increment primary key,
-ten_loai_dich_vu varchar(45)
+CREATE TABLE loai_dich_vu (
+    ma_loai_dich_vu INT AUTO_INCREMENT PRIMARY KEY,
+    ten_loai_dich_vu VARCHAR(45)
 );
 
-create table kieu_thue(
-ma_kieu_thue int auto_increment primary key,
-ten_kieu_thue varchar(45)
+CREATE TABLE kieu_thue (
+    ma_kieu_thue INT AUTO_INCREMENT PRIMARY KEY,
+    ten_kieu_thue VARCHAR(45)
 );
 
-create table dich_vu_di_kem(
-ma_dich_vu_di_kem int auto_increment primary key,
-ten_dich_vu_di_kem varchar(45),
-gia double,
-don_vi varchar(10),
-trang_thai varchar(45)
+CREATE TABLE dich_vu_di_kem (
+    ma_dich_vu_di_kem INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dich_vu_di_kem VARCHAR(45),
+    gia DOUBLE,
+    don_vi VARCHAR(10),
+    trang_thai VARCHAR(45)
 );
 
-create table nhan_vien(
-ma_nhan_vien int auto_increment primary key,
-ho_ten varchar(45),
-ngay_sinh date,
-so_cmnd varchar(45),
-luong double,
-so_dien_thoai varchar(45),
-email varchar(45),
-dia_chi varchar(45),
-ma_vi_tri int,
-ma_trinh_do int,
-ma_bo_phan int,
-foreign key(ma_vi_tri) references vi_tri(ma_vi_tri),
-foreign key(ma_trinh_do) references trinh_do(ma_trinh_do),
-foreign key(ma_bo_phan) references bo_phan(ma_bo_phan)
+CREATE TABLE nhan_vien (
+    ma_nhan_vien INT AUTO_INCREMENT PRIMARY KEY,
+    ho_ten VARCHAR(45),
+    ngay_sinh DATE,
+    so_cmnd VARCHAR(45),
+    luong DOUBLE,
+    so_dien_thoai VARCHAR(45),
+    email VARCHAR(45),
+    dia_chi VARCHAR(45),
+    ma_vi_tri INT,
+    ma_trinh_do INT,
+    ma_bo_phan INT,
+    FOREIGN KEY (ma_vi_tri)
+        REFERENCES vi_tri (ma_vi_tri),
+    FOREIGN KEY (ma_trinh_do)
+        REFERENCES trinh_do (ma_trinh_do),
+    FOREIGN KEY (ma_bo_phan)
+        REFERENCES bo_phan (ma_bo_phan)
 );
 
-create table khach_hang(
-ma_khach_hang int auto_increment primary key,
-ma_loai_khach int,
-ho_ten varchar(45),
-ngay_sinh date,
-gioi_tinh bit(1),
-so_cmnd varchar(45),
-so_dien_thoai varchar(45),
-email varchar(45),
-dia_chi varchar(45),
-foreign key(ma_loai_khach) references loai_khach(ma_loai_khach)
+CREATE TABLE khach_hang (
+    ma_khach_hang INT AUTO_INCREMENT PRIMARY KEY,
+    ma_loai_khach INT,
+    ho_ten VARCHAR(45),
+    ngay_sinh DATE,
+    gioi_tinh BIT(1),
+    so_cmnd VARCHAR(45),
+    so_dien_thoai VARCHAR(45),
+    email VARCHAR(45),
+    dia_chi VARCHAR(45),
+    FOREIGN KEY (ma_loai_khach)
+        REFERENCES loai_khach (ma_loai_khach)
 );
 
-create table dich_vu(
-ma_dich_vu int auto_increment primary key,
-ten_dich_vu varchar(45),
-dien_tich int,
-chi_phi_thue double,
-so_nguoi_toi_da int,
-ma_kieu_thue int,
-ma_loai_dich_vu int,
-tieu_chuan_phong varchar(45),
-mo_ta_tien_nghi_khac varchar(45),
-dien_tich_ho_boi double,
-so_tang int,
-foreign key(ma_kieu_thue) references kieu_thue(ma_kieu_thue),
-foreign key(ma_loai_dich_vu) references loai_dich_vu(ma_loai_dich_vu)
+CREATE TABLE dich_vu (
+    ma_dich_vu INT AUTO_INCREMENT PRIMARY KEY,
+    ten_dich_vu VARCHAR(45),
+    dien_tich INT,
+    chi_phi_thue DOUBLE,
+    so_nguoi_toi_da INT,
+    ma_kieu_thue INT,
+    ma_loai_dich_vu INT,
+    tieu_chuan_phong VARCHAR(45),
+    mo_ta_tien_nghi_khac VARCHAR(45),
+    dien_tich_ho_boi DOUBLE,
+    so_tang INT,
+    FOREIGN KEY (ma_kieu_thue)
+        REFERENCES kieu_thue (ma_kieu_thue),
+    FOREIGN KEY (ma_loai_dich_vu)
+        REFERENCES loai_dich_vu (ma_loai_dich_vu)
 );
 
-create table hop_dong(
-ma_hop_dong int auto_increment primary key,
-ngay_lam_hop_dong datetime,
-ngay_ket_thuc datetime,
-tien_dat_coc double,
-ma_nhan_vien int,
-ma_khach_hang int,
-ma_dich_vu int,
-foreign key(ma_nhan_vien) references nhan_vien(ma_nhan_vien), 
-foreign key(ma_khach_hang) references khach_hang(ma_khach_hang), 
-foreign key(ma_dich_vu) references dich_vu(ma_dich_vu) 
+CREATE TABLE hop_dong (
+    ma_hop_dong INT AUTO_INCREMENT PRIMARY KEY,
+    ngay_lam_hop_dong DATETIME,
+    ngay_ket_thuc DATETIME,
+    tien_dat_coc DOUBLE,
+    ma_nhan_vien INT,
+    ma_khach_hang INT,
+    ma_dich_vu INT,
+    FOREIGN KEY (ma_nhan_vien)
+        REFERENCES nhan_vien (ma_nhan_vien),
+    FOREIGN KEY (ma_khach_hang)
+        REFERENCES khach_hang (ma_khach_hang),
+    FOREIGN KEY (ma_dich_vu)
+        REFERENCES dich_vu (ma_dich_vu)
 );
 
-create table hop_dong_chi_tiet(
-ma_hop_dong_chi_tiet int auto_increment primary key,
-ma_hop_dong int,
-ma_dich_vu_di_kem int,
-so_luong int,
-foreign key(ma_hop_dong) references hop_dong(ma_hop_dong),
-foreign key(ma_dich_vu_di_kem) references dich_vu_di_kem(ma_dich_vu_di_kem)
+CREATE TABLE hop_dong_chi_tiet (
+    ma_hop_dong_chi_tiet INT AUTO_INCREMENT PRIMARY KEY,
+    ma_hop_dong INT,
+    ma_dich_vu_di_kem INT,
+    so_luong INT,
+    FOREIGN KEY (ma_hop_dong)
+        REFERENCES hop_dong (ma_hop_dong),
+    FOREIGN KEY (ma_dich_vu_di_kem)
+        REFERENCES dich_vu_di_kem (ma_dich_vu_di_kem)
 );
 
 INSERT INTO vi_tri (ten_vi_tri) VALUES
@@ -237,13 +248,6 @@ and (dia_chi like '%Đà Nẵng' or dia_chi like '%Quảng Trị');
 -- Kết quả hiển thị được sắp xếp tăng dần theo số lần đặt phòng của khách hàng. 
 -- Chỉ đếm những khách hàng nào có Tên loại khách hàng là “Diamond”.
 
-select *
-from khach_hang;
-select*
-from hop_dong;
-select*
-from loai_khach;
-
 select kh.ma_khach_hang,kh.ho_ten, count(hd.ma_hop_dong) as so_lan_dat_phong
 from khach_hang kh
 join loai_khach lk on lk.ma_loai_khach = kh.ma_loai_khach
@@ -288,7 +292,7 @@ join loai_dich_vu ldv on ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu
 where dv.ma_dich_vu not in ( 
 			select hd.ma_dich_vu
             from hop_dong hd
-            where month(hd.ngay_lam_hop_dong) in (1,2,3)
+            where quarter(hd.ngay_lam_hop_dong) in (1)
 				and year(hd.ngay_lam_hop_dong) =2021
 );
 
@@ -346,13 +350,13 @@ hd.ma_hop_dong,
 hd.ngay_lam_hop_dong,
 hd.ngay_ket_thuc,
 hd.tien_dat_coc,
-sum(ifnull(hdct.so_luong,0)) as so_luong_dich_vu_di_kem 
+sum(ifnull(hdct.so_luong,0)) as so_luong_dich_vu_di_kem,
+-- group_concat(dvdk.ten_dich_vu_di_kem separator ', ') as cac_dich_vu_di_kem,
+group_concat(concat(dvdk.ten_dich_vu_di_kem, ' x ', hdct.so_luong) separator ', ' ) as so_luong_dich_vu_di_kem
 from hop_dong hd
 left join hop_dong_chi_tiet hdct on hdct.ma_hop_dong = hd.ma_hop_dong
-group by hd.ma_hop_dong,
-hd.ngay_lam_hop_dong,
-hd.ngay_ket_thuc,
-hd.tien_dat_coc;
+left join dich_vu_di_kem dvdk on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem 
+group by hd.ma_hop_dong;
 
 -- 11. Hiển thị thông tin các dịch vụ đi kèm đã được sử dụng bởi những khách hàng 
 -- có ten_loai_khach là “Diamond” và có dia_chi ở “Vinh” hoặc “Quảng Ngãi”.
@@ -411,4 +415,91 @@ having so_luong_dich_vu_di_kem = (
         from hop_dong_chi_tiet hdct
         group by hdct.ma_dich_vu_di_kem
     ) as sub
-)
+);
+
+-- 14.Hiển thị thông tin tất cả các Dịch vụ đi kèm chỉ mới được sử dụng một lần duy nhất. 
+-- Thông tin hiển thị bao gồm ma_hop_dong, ten_loai_dich_vu, ten_dich_vu_di_kem, so_lan_su_dung 
+-- (được tính dựa trên việc count các ma_dich_vu_di_kem).
+
+SET sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));
+
+select hd.ma_hop_dong,ldv.ten_loai_dich_vu,dvdk.ten_dich_vu_di_kem,count(dvdk.ma_dich_vu_di_kem) as so_lan_su_dung
+from hop_dong_chi_tiet hdct
+join dich_vu_di_kem dvdk on hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+join hop_dong hd on hd.ma_hop_dong = hdct.ma_hop_dong
+join dich_vu dv on dv.ma_dich_vu = hd.ma_dich_vu
+join loai_dich_vu ldv on ldv.ma_loai_dich_vu = dv.ma_loai_dich_vu 
+group by dvdk.ma_dich_vu_di_kem
+having so_lan_su_dung = 1
+order by hd.ma_hop_dong;
+
+-- 15.Hiển thi thông tin của tất cả nhân viên bao gồm ma_nhan_vien, ho_ten, ten_trinh_do, ten_bo_phan, so_dien_thoai, dia_chi 
+-- mới chỉ lập được tối đa 3 hợp đồng từ năm 2020 đến 2021.
+
+select nv.ma_nhan_vien, nv.ho_ten,td.ten_trinh_do,bp.ten_bo_phan,nv.so_dien_thoai,nv.dia_chi
+from nhan_vien nv
+join trinh_do td on td.ma_trinh_do = nv.ma_trinh_do
+join bo_phan bp on bp.ma_bo_phan = nv.ma_bo_phan
+left join hop_dong hd on hd.ma_nhan_vien = nv.ma_nhan_vien
+where (year(hd.ngay_lam_hop_dong) between 2020 and 2021)
+group by nv.ma_nhan_vien, nv.ho_ten, td.ten_trinh_do, bp.ten_bo_phan, nv.so_dien_thoai, nv.dia_chi
+having count(hd.ma_hop_dong) <=3;
+
+-- 16.Xóa những Nhân viên chưa từng lập được hợp đồng nào từ năm 2019 đến năm 2021.
+delete from nhan_vien nv
+where nv.ma_nhan_vien not in (
+						select ma_nhan_vien
+						from hop_dong hd
+						where (year(hd.ngay_lam_hop_dong) between 2019 and 2021));
+
+-- 17.Cập nhật thông tin những khách hàng có ten_loai_khach từ Platinum lên Diamond, 
+-- chỉ cập nhật những khách hàng đã từng đặt phòng với Tổng Tiền thanh toán trong năm 2021 là lớn hơn 10.000.000 VNĐ.
+update khach_hang kh
+set ma_loai_khach = 1 
+where kh.ma_khach_hang in ( select * from view_tong_tien);
+
+
+create view view_tong_tien as
+select kh.ma_khach_hang
+from khach_hang kh
+left join hop_dong hd on hd.ma_khach_hang = kh.ma_khach_hang
+left join dich_vu dv on dv.ma_dich_vu = hd.ma_dich_vu
+left join hop_dong_chi_tiet hdct on hd.ma_hop_dong = hdct.ma_hop_dong
+left join dich_vu_di_kem dvdk on dvdk.ma_dich_vu_di_kem = hdct.ma_dich_vu_di_kem
+where (year (hd.ngay_lam_hop_dong) = 2021) and kh.ma_loai_khach = 2
+group by kh.ma_khach_hang,dv.chi_phi_thue
+having (ifnull(dv.chi_phi_thue,0) + SUM(IFNULL(hdct.so_luong, 0) * IFNULL(dvdk.gia, 0)))> 10000000; 
+
+select lk.ten_loai_khach
+from khach_hang kh
+join loai_khach lk on lk.ma_loai_khach = kh.ma_loai_khach;
+
+-- 18.Xóa những khách hàng có hợp đồng trước năm 2021 (chú ý ràng buộc giữa các bảng).
+
+delete from khach_hang where ma_khach_hang in (
+											select ma_khach_hang 
+                                            from hop_dong
+                                            where year(ngay_lam_hop_dong) < 2021
+                                            group by ma_khach_hang
+                                            );
+
+-- 19.Cập nhật giá cho các dịch vụ đi kèm được sử dụng trên 10 lần trong năm 2020 lên gấp đôi.
+	update dich_vu_di_kem 
+    set gia = (gia * 2) 
+    where  ma_dich_vu_di_kem in (
+								select dvdk.ma_dich_vu_di_kem
+                                from dich_vu_di_kem dvdk
+                                join hop_dong_chi_tiet hdct on hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
+                                join hop_dong hd on hd.ma_hop_dong = hdct.ma_hop_dong
+                                where year(hd.ngay_lam_hop_dong) >2010
+                                group by dvdk.ma_dich_vu_di_kem
+                                having sum(hdct.so_luong)=10
+    );
+
+-- 20.Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống,
+-- thông tin hiển thị bao gồm id (ma_nhan_vien, ma_khach_hang), ho_ten, email, so_dien_thoai, ngay_sinh, dia_chi.
+select nv.ma_nhan_vien as id, nv.ho_ten,nv.email,nv.so_dien_thoai,nv.ngay_sinh,nv.dia_chi
+from nhan_vien nv
+union
+select kh.ma_khach_hang,kh.ho_ten,kh.email,kh.so_dien_thoai,kh.ngay_sinh,kh.dia_chi
+from khach_hang kh;
