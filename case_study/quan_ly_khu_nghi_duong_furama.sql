@@ -491,9 +491,9 @@ delete from khach_hang where ma_khach_hang in (
                                 from dich_vu_di_kem dvdk
                                 join hop_dong_chi_tiet hdct on hdct.ma_dich_vu_di_kem = dvdk.ma_dich_vu_di_kem
                                 join hop_dong hd on hd.ma_hop_dong = hdct.ma_hop_dong
-                                where year(hd.ngay_lam_hop_dong) >2010
+                                where year(hd.ngay_lam_hop_dong) =2010
                                 group by dvdk.ma_dich_vu_di_kem
-                                having sum(hdct.so_luong)=10
+                                having sum(hdct.so_luong)>10
     );
 
 -- 20.Hiển thị thông tin của tất cả các nhân viên và khách hàng có trong hệ thống,
