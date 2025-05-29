@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Image Gallery</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .gallery-img {
+            width: 100%;
+            height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .gallery-item {
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid mt-4">
+    <h3 class="fw-bold">Responsive Image Gallery</h3>
+    <p><strong>Resize the browser window to see the effect.</strong></p>
+
+    <div class="row">
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item">
+                <img src="https://demo.codegym.vn/web/15/gallery/img_fjords.jpg" class="gallery-img" alt="Image 1">
+                <p>Add a description of the image here</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item">
+                <img src="https://demo.codegym.vn/web/15/gallery/img_forest.jpg" class="gallery-img" alt="Image 2">
+                <p>Add a description of the image here</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item">
+                <img src="https://demo.codegym.vn/web/15/gallery/img_lights.jpg" class="gallery-img" alt="Image 3">
+                <p>Add a description of the image here</p>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+            <div class="gallery-item">
+                <img src="https://demo.codegym.vn/web/15/gallery/img_mountains.jpg" class="gallery-img" alt="Image 4">
+                <p>Add a description of the image here</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="mt-4">
+        This example use media queries to re-arrange the images on different screen sizes: for screens larger than 700px
+        wide, it will show four images side by side, for screens smaller than 700px, it will show two images side by
+        side. For screens smaller than 500px, the images will stack vertically (100%).
+    </p>
+</div>
+</body>
+</html>
