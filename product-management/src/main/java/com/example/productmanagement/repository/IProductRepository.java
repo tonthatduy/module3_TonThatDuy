@@ -1,11 +1,11 @@
-package com.example.productmanagement.service;
+package com.example.productmanagement.repository;
 
 import com.example.productmanagement.dto.ProductDtoResponse;
 import com.example.productmanagement.entity.Product;
 
 import java.util.List;
 
-public interface IProductService {
+public interface IProductRepository {
     List<ProductDtoResponse> findAll();
 
     boolean add(Product product);
@@ -17,5 +17,4 @@ public interface IProductService {
     void remove(int id);
 
     List<Product> searchByName(String name);
-
 }

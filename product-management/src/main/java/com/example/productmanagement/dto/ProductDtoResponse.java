@@ -1,21 +1,23 @@
-package com.example.productmanagement.model;
+package com.example.productmanagement.dto;
 
-public class Product {
+public class ProductDtoResponse {
     private int id;
     private String name;
     private double price;
     private String description;
     private String publisher;
+    private String nameCategory;
 
-    public Product() {
+    public ProductDtoResponse() {
     }
 
-    public Product(int id, String name, double price, String description, String publisher) {
+    public ProductDtoResponse(int id, String name, double price, String description, String publisher, String nameCategory) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
         this.publisher = publisher;
+        this.nameCategory = nameCategory;
     }
 
     public int getId() {
@@ -56,5 +58,13 @@ public class Product {
 
     public void setPublisher(String publisher) {
         this.publisher = publisher;
+    }
+
+    public String getNameCategory() {
+        return nameCategory;
+    }
+
+    public void setNameCategory(String nameCategory) {
+        this.nameCategory = nameCategory;
     }
 }

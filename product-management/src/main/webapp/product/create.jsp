@@ -47,6 +47,17 @@
                 <td><input type="text" name="publisher" id="publisher"></td>
             </tr>
             <tr>
+                <td>Category:</td>
+                <td>
+                    <select name="id_category" id="id_category">
+                        <option value="">------Chọn Thể Loại------</option>
+                        <c:forEach items="${categorys}" var="category">
+                            <option value="${category.idCategory}">${category.nameCategory}</option>
+                        </c:forEach>
+                    </select>
+                </td>
+            </tr>
+            <tr>
                 <td></td>
                 <td><input type="submit" value="Create product"></td>
             </tr>

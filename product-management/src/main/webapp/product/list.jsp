@@ -16,6 +16,14 @@
 <p>
     <a href="/products?action=create">Create new customer</a>
 </p>
+<form action="/products" method="get">
+    <input type="hidden" name="action" value="search">
+    <input type="text" name="query" placeholder="Search by product name">
+    <input type="submit" value="Search">
+</form>
+<form action="/products" method="get" style="display:inline-block; margin-left: 10px;">
+    <input type="submit" value="Hiển thị tất cả">
+</form>
 <table border="1">
     <tr>
         <td>Name Details</td>
@@ -23,6 +31,7 @@
         <td>Price</td>
         <td>Description</td>
         <td>Publisher</td>
+        <td>Category</td>
         <td>Edit</td>
         <td>Delete</td>
     </tr>
@@ -33,6 +42,7 @@
             <td>${product.getPrice()}</td>
             <td>${product.getDescription()}</td>
             <td>${product.getPublisher()}</td>
+            <td>${product.getNameCategory()}</td>
             <td><a href="/products?action=edit&id=${product.getId()}">edit</a></td>
             <td><a href="/products?action=delete&id=${product.getId()}">delete</a></td>
         </tr>
