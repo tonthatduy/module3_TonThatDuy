@@ -26,7 +26,7 @@
 <p>
     <a href="/products">Back to product list</a>
 </p>
-<form method="post">
+<form method="post" action="products?action=create">
     <fieldset>
         <legend>Product information</legend>
         <table>
@@ -50,7 +50,7 @@
                 <td>Category:</td>
                 <td>
                     <select name="id_category" id="id_category">
-                        <option value="">------Chọn Thể Loại------</option>
+                        <span> value="">------Chọn Thể Loại------</span>
                         <c:forEach items="${categorys}" var="category">
                             <option value="${category.idCategory}">${category.nameCategory}</option>
                         </c:forEach>

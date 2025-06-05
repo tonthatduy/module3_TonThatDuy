@@ -28,17 +28,17 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public void update(int id, Product product) {
-        productRepository.update(id, product);
+    public boolean update( Product product) {
+       return productRepository.update(product);
     }
 
     @Override
-    public void remove(int id) {
-        productRepository.remove(id);
+    public boolean deleteById(int id) {
+       return productRepository.deleteById(id);
     }
 
     @Override
-    public List<Product> searchByName(String name) {
-        return productRepository.searchByName(name);
+    public List<ProductDtoResponse> searchByName(String name, String category) {
+        return productRepository.searchByName(name,category);
     }
 }

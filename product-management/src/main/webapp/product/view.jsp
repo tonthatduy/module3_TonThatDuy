@@ -32,6 +32,10 @@
         <td>Publisher: </td>
         <td>${requestScope["product"].getPublisher()}</td>
     </tr>
+    <tr>
+        <td>Category: </td>
+        <td>${requestScope["product"].getIdCategory()}</td>
+    </tr>
 </table>
 </body>
 </html>

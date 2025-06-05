@@ -33,7 +33,6 @@ public class ProductServlet extends HttpServlet {
                 showEditForm(req, resp);
                 break;
             case "delete":
-                showDeleteForm(req, resp);
                 break;
             case "view":
                 viewProduct(req, resp);
@@ -48,9 +47,10 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void searchProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String query = req.getParameter("query");
-        List<Product> products = productService.searchByName(query);
-        req.setAttribute("products", products);
+        String searchName = req.getParameter("searchName");
+        String searchCategory = req.getParameter("searchCategory");
+        List<ProductDtoResponse> resultList = productService.searchByName(searchName,searchCategory);
+        req.setAttribute("products", resultList);
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/list.jsp");
         dispatcher.forward(req, resp);
 
@@ -63,41 +63,25 @@ public class ProductServlet extends HttpServlet {
         dispatcher.forward(req, resp);
     }
 
-    private void showDeleteForm(HttpServletRequest req, HttpServletResponse resp) {
-        int id = Integer.parseInt(req.getParameter("id"));
-        Product product = productService.findById(id);
-        RequestDispatcher dispatcher;
-        if (product == null) {
-            dispatcher = req.getRequestDispatcher("error-404.jsp");
-        } else {
-            req.setAttribute("product", product);
-            dispatcher = req.getRequestDispatcher("product/delete.jsp");
-        }
-        try {
-            dispatcher.forward(req, resp);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
-    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) {
-        int id = Integer.parseInt(req.getParameter("id"));
-        Product product = productService.findById(id);
-        RequestDispatcher dispatcher;
-        if (product == null) {
-            dispatcher = req.getRequestDispatcher("error-404.jsp");
-        } else {
-            req.setAttribute("product", product);
-            dispatcher = req.getRequestDispatcher("product/edit.jsp");
+    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String idParam = req.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            resp.sendRedirect("/products?mess=Thiếu ID sản phẩm để chỉnh sửa");
+            return;
         }
         try {
-            dispatcher.forward(req, resp);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            int id = Integer.parseInt(idParam);
+            Product product = productService.findById(id);
+            if (product == null) {
+                resp.sendRedirect("/products?mess=Sản phẩm không tồn tại");
+            } else {
+                req.setAttribute("product", product);
+                req.setAttribute("categoryList", categoryService.findAll());
+                req.getRequestDispatcher("product/edit.jsp").forward(req, resp);
+            }
+        } catch (NumberFormatException e) {
+            resp.sendRedirect("/products?mess=ID sản phẩm không hợp lệ");
         }
 
     }
@@ -108,7 +92,7 @@ public class ProductServlet extends HttpServlet {
         dispatcher.forward(req, resp);
     }
 
-    private void viewProduct(HttpServletRequest req, HttpServletResponse resp) {
+    private void viewProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         Product product = productService.findById(id);
         RequestDispatcher dispatcher;
@@ -118,13 +102,7 @@ public class ProductServlet extends HttpServlet {
             req.setAttribute("product", product);
             dispatcher = req.getRequestDispatcher("product/view.jsp");
         }
-        try {
-            dispatcher.forward(req, resp);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dispatcher.forward(req, resp);
     }
 
 
@@ -138,7 +116,7 @@ public class ProductServlet extends HttpServlet {
             case "create":
                 createProduct(req, resp);
                 break;
-            case "edit":
+            case "update":
                 updateProduct(req, resp);
                 break;
             case "delete":
@@ -156,65 +134,46 @@ public class ProductServlet extends HttpServlet {
         double price = Double.parseDouble(req.getParameter("price"));
         String description = req.getParameter("description");
         String publisher = req.getParameter("publisher");
-        int idCategory =Integer.parseInt(req.getParameter("idCategory"));
-        Product product = new Product( name, price, description, publisher, idCategory);
-        boolean isAddSuccess  = productService.add(product);
-        String mess = "created success";
-        if (!isAddSuccess){
-            mess = "not created success";
-        }
-        RequestDispatcher dispatcher = req.getRequestDispatcher("product/create.jsp");
-        req.setAttribute("message", "New product was created");
-        dispatcher.forward(req, resp);
 
+        String idCategoryStr = req.getParameter("id_category");
+        if (idCategoryStr == null || idCategoryStr.trim().isEmpty()) {
+            req.setAttribute("message", "Vui lòng chọn thể loại.");
+            req.setAttribute("categorys", categoryService.findAll());
+            req.getRequestDispatcher("product/create.jsp").forward(req, resp);
+            return;
+        }
+
+        int idCategory = Integer.parseInt(idCategoryStr);
+        Product product = new Product(name, price, description, publisher, idCategory);
+        boolean isAddSuccess = productService.add(product);
+        String mess = isAddSuccess ? "created success" : "not created success";
+        resp.sendRedirect("/products?mess=" + mess);
     }
 
-    private void updateProduct(HttpServletRequest req, HttpServletResponse resp) {
+    private void updateProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         String name = req.getParameter("name");
         double price = Double.parseDouble(req.getParameter("price"));
         String description = req.getParameter("description");
         String publisher = req.getParameter("publisher");
-        Product product = productService.findById(id);
-        RequestDispatcher dispatcher;
-        if (product == null) {
-            dispatcher = req.getRequestDispatcher("error-404.jsp");
-        } else {
-            product.setName(name);
-            product.setPrice(price);
-            product.setDescription(description);
-            product.setPublisher(publisher);
-            productService.update(id, product);
-            req.setAttribute("product", product);
-            req.setAttribute("message", "Product information was updated");
-            dispatcher = req.getRequestDispatcher("product/edit.jsp");
-        }
-        try {
-            dispatcher.forward(req, resp);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int idCategory = Integer.parseInt(req.getParameter("id_category"));
+        Product product = new Product(id, name, price, description, publisher, idCategory);
+        boolean isUpdateSuccess = productService.update(product);
+
+        String mess = isUpdateSuccess ? "Update success" : "Not update success";
+        resp.sendRedirect("/products?mess=" + mess);
 
 
     }
 
-    private void deleteProduct(HttpServletRequest req, HttpServletResponse resp) {
-        int id = Integer.parseInt(req.getParameter("id"));
-        Product product = productService.findById(id);
-        RequestDispatcher dispatcher;
-        if (product == null) {
-            dispatcher = req.getRequestDispatcher("error-404.jsp");
-        } else {
-            productService.remove(id);
-            try {
-                resp.sendRedirect("/products");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+    private void deleteProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int id = Integer.parseInt(req.getParameter("deleteId"));
+        boolean isDeleteSuccess = productService.deleteById(id);
+        String mess = "Deleted success";
+        if (!isDeleteSuccess) {
+            mess = " Not deleted Success";
         }
-
+        resp.sendRedirect("/products?mess=" + mess);
 
     }
 }

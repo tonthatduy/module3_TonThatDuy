@@ -12,10 +12,10 @@ public interface IProductService {
 
     Product findById(int id);
 
-    void update(int id, Product product);
+    boolean update( Product product);
 
-    void remove(int id);
+    boolean deleteById(int id);
 
-    List<Product> searchByName(String name);
+    List<ProductDtoResponse> searchByName(String name, String category);
 
 }
