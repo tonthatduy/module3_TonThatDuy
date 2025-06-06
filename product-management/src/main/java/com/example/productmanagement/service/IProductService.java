@@ -16,6 +16,9 @@ public interface IProductService {
 
     boolean deleteById(int id);
 
-    List<ProductDtoResponse> searchByName(String name, String category);
+    List<ProductDtoResponse> searchByName(String searchName, int idCategory);
+
+    List<ProductDtoResponse> findPaginated(int limit, int offset);
+    int countTotalProducts();
 
 }

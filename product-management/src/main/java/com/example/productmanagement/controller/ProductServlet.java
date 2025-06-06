@@ -1,6 +1,7 @@
 package com.example.productmanagement.controller;
 
 import com.example.productmanagement.dto.ProductDtoResponse;
+import com.example.productmanagement.entity.Category;
 import com.example.productmanagement.entity.Product;
 import com.example.productmanagement.service.CategoryService;
 import com.example.productmanagement.service.ProductService;
@@ -39,6 +40,7 @@ public class ProductServlet extends HttpServlet {
                 break;
             case "search":
                 searchProduct(req, resp);
+                break;
             case "list":
             default:
                 listProducts(req, resp);
@@ -48,8 +50,12 @@ public class ProductServlet extends HttpServlet {
 
     private void searchProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String searchName = req.getParameter("searchName");
-        String searchCategory = req.getParameter("searchCategory");
-        List<ProductDtoResponse> resultList = productService.searchByName(searchName,searchCategory);
+        int idCategory= Integer.parseInt(req.getParameter("id_category"));
+        req.setAttribute("searchName",searchName);
+        req.setAttribute("id_category",idCategory);
+        List<ProductDtoResponse> resultList = productService.searchByName(searchName, idCategory);
+        List<Category> categories = categoryService.findAll();
+        req.setAttribute("categories", categories);
         req.setAttribute("products", resultList);
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/list.jsp");
         dispatcher.forward(req, resp);
@@ -58,9 +64,26 @@ public class ProductServlet extends HttpServlet {
 
     private void listProducts(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<ProductDtoResponse> productDtoResponses = productService.findAll();
+        List<Category> categories = categoryService.findAll();
+        req.setAttribute("categories", categories);
         req.setAttribute("products", productDtoResponses);
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/list.jsp");
         dispatcher.forward(req, resp);
+//        int page = req.getParameter("page") == null ? 1 : Integer.parseInt(req.getParameter("page"));
+//        int limit = 5;
+//        int offset = (page - 1) * limit;
+//
+//        // Gọi service phân trang
+//        List<ProductDtoResponse> productDtoResponses = productService.findPaginated(limit, offset);
+//        int total = productService.countTotalProducts(); // Đếm tổng số sản phẩm
+//        int totalPage = (int) Math.ceil((double) total / limit);
+//
+//        req.setAttribute("products", productDtoResponses);
+//        req.setAttribute("totalPage", totalPage);
+//        req.setAttribute("currentPage", page);
+//
+//        RequestDispatcher dispatcher = req.getRequestDispatcher("product/list.jsp");
+//        dispatcher.forward(req, resp);
     }
 
 
@@ -87,7 +110,7 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void showFromAdd(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("categorys", categoryService.findAll());
+        req.setAttribute("categories", categoryService.findAll());
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/create.jsp");
         dispatcher.forward(req, resp);
     }
@@ -174,6 +197,5 @@ public class ProductServlet extends HttpServlet {
             mess = " Not deleted Success";
         }
         resp.sendRedirect("/products?mess=" + mess);
-
     }
 }
