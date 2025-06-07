@@ -49,10 +49,18 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void searchProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String searchName = req.getParameter("searchName");
-        int idCategory= Integer.parseInt(req.getParameter("id_category"));
-        req.setAttribute("searchName",searchName);
-        req.setAttribute("id_category",idCategory);
+        int idCategory = 0;
+        String searchName = null;
+        if (!req.getParameter("searchName").isEmpty()) {
+            searchName = req.getParameter("searchName");
+
+        }
+        if (!req.getParameter("searchCategory").isEmpty()) {
+            idCategory = Integer.parseInt(req.getParameter("searchCategory"));
+        }
+//        idCategory = 1;
+        req.setAttribute("searchName", searchName);
+        req.setAttribute("id_category", idCategory);
         List<ProductDtoResponse> resultList = productService.searchByName(searchName, idCategory);
         List<Category> categories = categoryService.findAll();
         req.setAttribute("categories", categories);

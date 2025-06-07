@@ -22,8 +22,13 @@ public class ProductRepository implements IProductRepository {
             "FROM product p " +
             "JOIN category c " +
             "ON p.id_category = c.id_category " +
-            "WHERE p.name LIKE ? AND c.name_category LIKE ?";
-    private final String SEARCH_BY_NAME = "select * from product where `name` like ?";
+            "WHERE p.name LIKE ? AND c.id_category = ?";
+    private final String SELECT_1 = "select p.* , c.name_category " +
+            "from product p " +
+            "join category c " +
+            "on c.id_category = p.id_category " +
+            " where p.`name` like ?";
+    private final String SEARCH_BY_NAME = "select * from product where `name` like %?%";
     private static final String SELECT_PAGE = "SELECT p.*, c.name_category " +
             "FROM product p " +
             "JOIN category c ON p.id_category = c.id_category " +
@@ -143,9 +148,9 @@ public class ProductRepository implements IProductRepository {
             }
         } else {
             try (Connection connection = BaseRepository.getConnectDB();
-                 CallableStatement callableStatement = connection.prepareCall(SEARCH_BY_NAME)) {
-                callableStatement.setString(1, searchName);
-                callableStatement.setInt(2, idCategory);
+                 CallableStatement callableStatement = connection.prepareCall(SELECT_1)) {
+                callableStatement.setString(1, "%" + searchName + "%");
+//                callableStatement.setInt(2, idCategory);
                 ResultSet rs = callableStatement.executeQuery();
                 while (rs.next()) {
                     int id = rs.getInt("id");
@@ -157,7 +162,9 @@ public class ProductRepository implements IProductRepository {
                     resultList.add(new ProductDtoResponse(id, productName, price, description, publisher, categoryName));
                 }
             } catch (SQLException e) {
+                System.out.println("Lỗi khi gọi searchByName");
                 throw new RuntimeException(e);
+
             }
         }
         return resultList;
