@@ -14,6 +14,11 @@ public class Student {
         this.idClass = idClass;
     }
 
+    public Student(String nameStudent, int idClass) {
+        this.nameStudent = nameStudent;
+        this.idClass = idClass;
+    }
+
     public int getIdStudent() {
         return idStudent;
     }

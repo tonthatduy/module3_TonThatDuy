@@ -54,13 +54,13 @@
         <h2 class="mb-4"><i class="bi bi-book"></i> Student List</h2>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="/products?action=create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New Student</a>
+            <a href="/students?action=create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New Student</a>
 
-            <form class="d-flex search-form" action="/products" method="get">
+            <form class="d-flex search-form" action="/students" method="get">
                 <input type="text" name="search" class="form-control me-2" placeholder="Nhập tên học sinh">
                 <select name="class" class="form-select me-2" style="width: 150px;">
                     <option value="">All Classes</option>
-                    <c:forEach items="${classList}" var="classItem">
+                    <c:forEach items="${classL.ist}" var="classItem">
                         <option value="${classItem}">${classItem}</option>
                     </c:forEach>
                 </select>

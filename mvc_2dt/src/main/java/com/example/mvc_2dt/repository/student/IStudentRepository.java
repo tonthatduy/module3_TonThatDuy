@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface IStudentRepository {
     List<StudentDtoReponse> findAll();
+    boolean add(Student student);
 
 }
