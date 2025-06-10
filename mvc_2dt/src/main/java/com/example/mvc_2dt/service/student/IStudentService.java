@@ -8,4 +8,7 @@ import java.util.List;
 public interface IStudentService {
     List<StudentDtoReponse> findAll();
     boolean add (Student student);
+    Student findById(int id);
+    boolean update(Student student);
+    boolean deleteById(int id);
 }

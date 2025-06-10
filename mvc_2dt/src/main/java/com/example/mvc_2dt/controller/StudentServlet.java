@@ -17,8 +17,8 @@ import java.util.List;
 
 @WebServlet(name = "StudentServlet", urlPatterns = "/students")
 public class StudentServlet extends HttpServlet {
-    private StudentService studentService = new StudentService();
-    private ClassService classService = new ClassService();
+    private final static StudentService studentService = new StudentService();
+    private final static ClassService classService = new ClassService();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -31,6 +31,7 @@ public class StudentServlet extends HttpServlet {
                 showFromAdd(req, resp);
                 break;
             case "update":
+                showUpdateForm(req, resp);
                 break;
             case "delete":
                 break;
@@ -38,6 +39,27 @@ public class StudentServlet extends HttpServlet {
             default:
                 listStudent(req, resp);
                 break;
+        }
+    }
+
+    private void showUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String idParam = req.getParameter("id");
+        if (idParam == null || idParam.trim().isEmpty()) {
+            resp.sendRedirect("/students?mess=Thiếu ID sản phẩm để chỉnh sửa");
+            return;
+        }
+        try {
+            int id = Integer.parseInt(idParam);
+            Student student = studentService.findById(id);
+            if (student == null) {
+                resp.sendRedirect("/students?mess=Tên học sinh không tồn tại");
+            } else {
+                req.setAttribute("student", student);
+                req.setAttribute("classes", classService.findAll());
+                req.getRequestDispatcher("student/update.jsp").forward(req, resp);
+            }
+        } catch (ServletException e) {
+            resp.sendRedirect("/students?mess=ID Student không hợp lệ");
         }
     }
 
@@ -68,10 +90,37 @@ public class StudentServlet extends HttpServlet {
             case "create":
                 createStudent(req, resp);
                 break;
+            case "update":
+                updateStudent(req, resp);
+                break;
+            case "delete":
+                deleteStudent(req, resp);
+                break;
             default:
                 listStudent(req, resp);
                 break;
         }
+    }
+
+    private void deleteStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int id = Integer.parseInt(req.getParameter("deleteId"));
+        boolean isDeleteSuccess = studentService.deleteById(id);
+        String mess = "Delete success";
+        if (!isDeleteSuccess) {
+            mess = "Not deleted success";
+        }
+        resp.sendRedirect("/students?mess" + mess);
+
+
+    }
+
+    private void updateStudent(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        int id = Integer.parseInt(req.getParameter("idStudent"));
+        String name = req.getParameter("nameStudent");
+        int idClass = Integer.parseInt(req.getParameter("idClass"));
+        boolean isUpdateSuccess = studentService.update(new Student(id, name, idClass));
+        String mess = isUpdateSuccess ? "Update success" : "Not update success";
+        resp.sendRedirect("/students?mess=" + mess);
     }
 
     private void createStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -80,7 +129,7 @@ public class StudentServlet extends HttpServlet {
         if (idClassStr == null || idClassStr.trim().isEmpty()) {
             req.setAttribute("message", "Vui Lòng chọn lớp");
             req.setAttribute("classes", classService.findAll());
-            req.getRequestDispatcher("students/create.jsp").forward(req, resp);
+            req.getRequestDispatcher("student/create.jsp").forward(req, resp);
             return;
         }
         int idClass = Integer.parseInt(idClassStr);

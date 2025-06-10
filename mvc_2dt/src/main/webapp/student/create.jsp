@@ -122,7 +122,7 @@
         <table>
             <tr>
                 <td>Name:</td>
-                <td><input type="text" name="name" id="name" required></td>
+                <td><input type="text" name="nameStudent" id="nameStudent" required></td>
             </tr>
             <tr>
                 <td>Class:</td>

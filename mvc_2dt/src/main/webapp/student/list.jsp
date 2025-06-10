@@ -67,7 +67,7 @@
                 <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm kiếm</button>
             </form>
 
-            <a href="/products" class="btn btn-secondary"><i class="bi bi-list-ul"></i> Hiển thị tất cả</a>
+            <a href="/students" class="btn btn-secondary"><i class="bi bi-list-ul"></i> Hiển thị tất cả</a>
         </div>
 
         <table id="tableStudent" class="table table-bordered table-hover text-center">
@@ -83,13 +83,13 @@
             <c:forEach items="${studentlist}" var="student">
                 <tr>
                     <td>
-                        <a href="/products?action=view&id=${student.id}" class="text-decoration-none fw-bold text-primary">
+                        <a href="/students?action=view&id=${student.id}" class="text-decoration-none fw-bold text-primary">
                                 ${student.name}
                         </a>
                     </td>
                     <td>${student.nameClass}</td>
                     <td>
-                        <a href="/products?action=edit&id=${student.id}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                        <a href="/students?action=update&id=${student.id}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
                     </td>
                     <td>
                         <button class="btn btn-danger btn-sm delete-btn"
@@ -120,8 +120,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="/products?action=delete" method="post">
-                    <input type="hidden" name="id" id="deleteId">
+                <form action="/students?action=delete" method="post">
+                    <input type="hidden" name="deleteId" id="deleteId">
                     <button type="submit" class="btn btn-danger">Delete</button>
                 </form>
             </div>
