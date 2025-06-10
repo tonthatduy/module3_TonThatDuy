@@ -34,4 +34,19 @@ public class StudentService implements IStudentService {
     public boolean deleteById(int id) {
         return studentRepository.deleteById(id);
     }
+
+    @Override
+    public List<StudentDtoReponse> searchByNameAndClass(String searchName, String searchClass) {
+        return studentRepository.searchByNameAndClass(searchName,searchClass);
+    }
+
+    @Override
+    public List<StudentDtoReponse> searchByName(String searchName) {
+        return studentRepository.searchByName(searchName);
+    }
+
+    @Override
+    public List<StudentDtoReponse> searchByClass(String searchClass) {
+        return studentRepository.searchByClass(searchClass);
+    }
 }

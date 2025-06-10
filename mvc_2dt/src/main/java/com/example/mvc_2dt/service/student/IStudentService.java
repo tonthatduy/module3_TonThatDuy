@@ -11,4 +11,7 @@ public interface IStudentService {
     Student findById(int id);
     boolean update(Student student);
     boolean deleteById(int id);
+    List<StudentDtoReponse> searchByNameAndClass(String searchName,String searchClass);
+    List<StudentDtoReponse> searchByName(String searchName);
+    List<StudentDtoReponse> searchByClass(String searchClass);
 }

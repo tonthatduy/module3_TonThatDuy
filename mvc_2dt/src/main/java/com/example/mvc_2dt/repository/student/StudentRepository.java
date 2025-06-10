@@ -146,6 +146,7 @@ public class StudentRepository implements IStudentRepository {
                 reusltList.add(new StudentDtoReponse(id, nameStudent, nameClass));
             }
         } catch (SQLException e) {
+            System.out.println("Lỗi khi gọi searchByName");
             throw new RuntimeException(e);
         }
         return reusltList;

@@ -35,11 +35,35 @@ public class StudentServlet extends HttpServlet {
                 break;
             case "delete":
                 break;
+            case "search":
+                searchStudentAndClass(req, resp);
             case "list":
             default:
                 listStudent(req, resp);
                 break;
         }
+    }
+
+    private void searchStudentAndClass(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String searchName = req.getParameter("searchName");
+        String searchClass = req.getParameter("searchClass");
+        List<StudentDtoReponse> searchResults;
+        if ((searchName == null || searchName.trim().isEmpty()) && (searchClass == null || searchClass.trim().isEmpty())) {
+            searchResults = studentService.findAll();
+        } else if ((searchName != null && !searchName.trim().isEmpty()) && (searchClass == null || searchClass.trim().isEmpty())) {
+            searchResults = studentService.searchByName(searchName);
+        } else if ((searchName == null || searchName.trim().isEmpty()) && (searchClass != null && !searchClass.trim().isEmpty())) {
+            searchResults = studentService.searchByClass(searchClass);
+        } else {
+            searchResults = studentService.searchByNameAndClass(searchName, searchClass);
+        }
+        List<Class> classList = classService.findAll();
+        req.setAttribute("classList", classList);
+        req.setAttribute("studentList", searchResults);
+        RequestDispatcher dispatcher = req.getRequestDispatcher("/student/list.jsp");
+        dispatcher.forward(req, resp);
+
+
     }
 
     private void showUpdateForm(HttpServletRequest req, HttpServletResponse resp) throws IOException {
@@ -64,7 +88,7 @@ public class StudentServlet extends HttpServlet {
     }
 
     private void showFromAdd(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("classes", classService.findAll());
+        req.setAttribute("classList", classService.findAll());
         RequestDispatcher dispatcher = req.getRequestDispatcher("student/create.jsp");
         dispatcher.forward(req, resp);
 
@@ -73,8 +97,8 @@ public class StudentServlet extends HttpServlet {
     private void listStudent(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<StudentDtoReponse> studentDtoReponses = studentService.findAll();
         List<Class> classList = classService.findAll();
-        req.setAttribute("classlist", classList);
-        req.setAttribute("studentlist", studentDtoReponses);
+        req.setAttribute("classList", classList);
+        req.setAttribute("studentList", studentDtoReponses);
         RequestDispatcher dispatcher = req.getRequestDispatcher("student/list.jsp");
         dispatcher.forward(req, resp);
 
@@ -128,7 +152,7 @@ public class StudentServlet extends HttpServlet {
         String idClassStr = req.getParameter("idClass");
         if (idClassStr == null || idClassStr.trim().isEmpty()) {
             req.setAttribute("message", "Vui Lòng chọn lớp");
-            req.setAttribute("classes", classService.findAll());
+            req.setAttribute("classList", classService.findAll());
             req.getRequestDispatcher("student/create.jsp").forward(req, resp);
             return;
         }

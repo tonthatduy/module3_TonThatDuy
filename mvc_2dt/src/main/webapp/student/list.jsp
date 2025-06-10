@@ -17,31 +17,39 @@
         body {
             background-color: #f8f9fa;
         }
+
         .card {
             border: none;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
+
         .table th, .table td {
             vertical-align: middle;
         }
+
         .btn-primary {
             background: linear-gradient(45deg, #007bff, #00d4ff);
             border: none;
         }
+
         .btn-primary:hover {
             background: linear-gradient(45deg, #0056b3, #0098cc);
         }
+
         .btn-danger {
             background: linear-gradient(45deg, #dc3545, #ff6b6b);
             border: none;
         }
+
         .btn-danger:hover {
             background: linear-gradient(45deg, #a71d2a, #cc5252);
         }
+
         .search-form .form-select, .search-form .form-control {
             border-radius: 20px;
         }
+
         .dataTables_wrapper .dataTables_paginate .paginate_button {
             border-radius: 50%;
             margin: 0 5px;
@@ -54,14 +62,19 @@
         <h2 class="mb-4"><i class="bi bi-book"></i> Student List</h2>
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <a href="/students?action=create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New Student</a>
+            <a href="/students?action=create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Create New
+                Student</a>
 
             <form class="d-flex search-form" action="/students" method="get">
-                <input type="text" name="search" class="form-control me-2" placeholder="Nhập tên học sinh">
-                <select name="class" class="form-select me-2" style="width: 150px;">
+                <input type="hidden" name="action" value="search">
+                <input type="text" name="searchName" class="form-control me-2" placeholder="Nhập tên học sinh"
+                       value="${param.searchName}">
+                <select name="searchClass" id="searchClass" class="form-select me-2">
                     <option value="">All Classes</option>
-                    <c:forEach items="${classL.ist}" var="classItem">
-                        <option value="${classItem}">${classItem}</option>
+                    <c:forEach items="${classList}" var="classItem">
+                        <option value="${classItem.idClass}">${classItem.nameClass}
+                            <c:if test="${param.searchClass == classItem.idClass}">selected</c:if>
+                        </option>
                     </c:forEach>
                 </select>
                 <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm kiếm</button>
@@ -80,16 +93,18 @@
             </tr>
             </thead>
             <tbody>
-            <c:forEach items="${studentlist}" var="student">
+            <c:forEach items="${studentList}" var="student">
                 <tr>
                     <td>
-                        <a href="/students?action=view&id=${student.id}" class="text-decoration-none fw-bold text-primary">
+                        <a href="/students?action=view&id=${student.id}"
+                           class="text-decoration-none fw-bold text-primary">
                                 ${student.name}
                         </a>
                     </td>
                     <td>${student.nameClass}</td>
                     <td>
-                        <a href="/students?action=update&id=${student.id}" class="btn btn-warning btn-sm"><i class="bi bi-pencil"></i> Edit</a>
+                        <a href="/students?action=update&id=${student.id}" class="btn btn-warning btn-sm"><i
+                                class="bi bi-pencil"></i> Edit</a>
                     </td>
                     <td>
                         <button class="btn btn-danger btn-sm delete-btn"
