@@ -38,8 +38,18 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public List<ProductDtoResponse> searchByName(String searchName, int idCategory) {
-        return productRepository.searchByName(searchName, idCategory);
+    public List<ProductDtoResponse> searchByNameAndCategory(String searchName, String searchCategory) {
+        return productRepository.searchByNameAndCateGory(searchName,searchCategory);
+    }
+
+    @Override
+    public List<ProductDtoResponse> searchByCategory(String searchCategory) {
+        return productRepository.searchByCategory(searchCategory);
+    }
+
+    @Override
+    public List<ProductDtoResponse> searchByName(String searchName) {
+        return productRepository.searchByName(searchName);
     }
 
     @Override

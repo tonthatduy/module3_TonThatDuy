@@ -12,11 +12,17 @@ public interface IProductRepository {
 
     Product findById(int id);
 
-    boolean update( Product product);
+    boolean update(Product product);
 
     boolean deleteById(int id);
 
-    List<ProductDtoResponse> searchByName(String searchName, int idCategory);
+    List<ProductDtoResponse> searchByNameAndCateGory(String searchName, String searchCategory);
+
     List<ProductDtoResponse> findPaginated(int limit, int offset);
+
     int countTotalProducts();
+
+    List<ProductDtoResponse> searchByCategory(String searchCategory);
+
+    List<ProductDtoResponse> searchByName(String searchName);
 }

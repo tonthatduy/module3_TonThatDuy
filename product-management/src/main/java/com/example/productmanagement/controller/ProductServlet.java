@@ -17,7 +17,7 @@ import java.util.List;
 
 @WebServlet(name = "ProductServlet", urlPatterns = "/products")
 public class ProductServlet extends HttpServlet {
-    private final ProductService productService = new ProductService();
+    private final static ProductService productService = new ProductService();
     private final CategoryService categoryService = new CategoryService();
 
     @Override
@@ -49,25 +49,23 @@ public class ProductServlet extends HttpServlet {
     }
 
     private void searchProduct(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        int idCategory = 0;
-        String searchName = null;
-        if (!req.getParameter("searchName").isEmpty()) {
-            searchName = req.getParameter("searchName");
-
+        String searchName = req.getParameter("searchName");
+        String searchCategory = req.getParameter("searchCategory");
+        List<ProductDtoResponse> searchReults;
+        if ((searchName == null || searchName.isEmpty()) && (searchCategory == null || searchCategory.isEmpty())) {
+            searchReults = productService.findAll();
+        } else if ((searchName != null && !searchName.isEmpty()) && (searchCategory == null || searchCategory.isEmpty())) {
+            searchReults = productService.searchByName(searchName);
+        } else if ((searchName == null || searchName.isEmpty()) && (searchCategory != null && !searchCategory.isEmpty())){
+            searchReults = productService.searchByCategory(searchCategory);
+        } else {
+            searchReults = productService.searchByNameAndCategory(searchName,searchCategory);
         }
-        if (!req.getParameter("searchCategory").isEmpty()) {
-            idCategory = Integer.parseInt(req.getParameter("searchCategory"));
-        }
-//        idCategory = 1;
-        req.setAttribute("searchName", searchName);
-        req.setAttribute("id_category", idCategory);
-        List<ProductDtoResponse> resultList = productService.searchByName(searchName, idCategory);
         List<Category> categories = categoryService.findAll();
         req.setAttribute("categories", categories);
-        req.setAttribute("products", resultList);
+        req.setAttribute("products", searchReults);
         RequestDispatcher dispatcher = req.getRequestDispatcher("product/list.jsp");
         dispatcher.forward(req, resp);
-
     }
 
     private void listProducts(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

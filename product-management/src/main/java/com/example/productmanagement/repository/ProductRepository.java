@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductRepository implements IProductRepository {
-    List<Product> products = new ArrayList<>();
     private final String SELECT_ALL = "select * from product;";
     private final String SELECT_ALL_JOIN = "select p.* , c.name_category " +
             "from product p " +
@@ -23,16 +22,24 @@ public class ProductRepository implements IProductRepository {
             "JOIN category c " +
             "ON p.id_category = c.id_category " +
             "WHERE p.name LIKE ? AND c.id_category = ?";
-    private final String SELECT_1 = "select p.* , c.name_category " +
+    //    private final String SELECT_1 = "select p.* , c.name_category " +
+//            "from product p " +
+//            "join category c " +
+//            "on c.id_category = p.id_category " +
+//            " where p.`name` like ?";
+    private final String SEARCH_BY_NAME = "select p.*, c.name_category " +
             "from product p " +
             "join category c " +
-            "on c.id_category = p.id_category " +
-            " where p.`name` like ?";
-    private final String SEARCH_BY_NAME = "select * from product where `name` like %?%";
+            "on p.id_category = c.id_category " +
+            "where p.name like ?";
     private static final String SELECT_PAGE = "SELECT p.*, c.name_category " +
             "FROM product p " +
             "JOIN category c ON p.id_category = c.id_category " +
             "LIMIT ? OFFSET ?";
+    private static final String SEARCH_BY_CATEGORY = "SELECT p.id,p.name,p.price,p.description,p.publisher,c.name_category " +
+            "FROM product p " +
+            "JOIN category c ON p.id_category = c.id_category " +
+            "WHERE c.id_category = ?";
 
 
     @Override
@@ -126,48 +133,74 @@ public class ProductRepository implements IProductRepository {
     }
 
     @Override
-    public List<ProductDtoResponse> searchByName(String searchName, int idCategory) {
+    public List<ProductDtoResponse> searchByNameAndCateGory(String searchName, String searchCategory) {
         List<ProductDtoResponse> resultList = new ArrayList<>();
-        if (idCategory != 0) {
             try (Connection connection = BaseRepository.getConnectDB();
-                 CallableStatement callableStatement = connection.prepareCall(SEARCH_BY_NAME_AND_CATEGORY)) {
-                callableStatement.setString(1, searchName);
-                callableStatement.setInt(2, idCategory);
-                ResultSet rs = callableStatement.executeQuery();
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String productName = rs.getString("name");
-                    double price = rs.getDouble("price");
-                    String description = rs.getString("description");
-                    String publisher = rs.getString("publisher");
-                    String categoryName = rs.getString("name_category");
+                 PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_BY_NAME_AND_CATEGORY)) {
+                preparedStatement.setString(1, "%" + searchName + "%");
+                preparedStatement.setInt(2,Integer.parseInt(searchCategory) );
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    int id = resultSet.getInt("id");
+                    String productName = resultSet.getString("name");
+                    double price = resultSet.getDouble("price");
+                    String description = resultSet.getString("description");
+                    String publisher = resultSet.getString("publisher");
+                    String categoryName = resultSet.getString("name_category");
                     resultList.add(new ProductDtoResponse(id, productName, price, description, publisher, categoryName));
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } else {
-            try (Connection connection = BaseRepository.getConnectDB();
-                 CallableStatement callableStatement = connection.prepareCall(SELECT_1)) {
-                callableStatement.setString(1, "%" + searchName + "%");
-//                callableStatement.setInt(2, idCategory);
-                ResultSet rs = callableStatement.executeQuery();
-                while (rs.next()) {
-                    int id = rs.getInt("id");
-                    String productName = rs.getString("name");
-                    double price = rs.getDouble("price");
-                    String description = rs.getString("description");
-                    String publisher = rs.getString("publisher");
-                    String categoryName = rs.getString("name_category");
-                    resultList.add(new ProductDtoResponse(id, productName, price, description, publisher, categoryName));
-                }
-            } catch (SQLException e) {
-                System.out.println("Lỗi khi gọi searchByName");
-                throw new RuntimeException(e);
-
-            }
-        }
         return resultList;
+    }
+
+    @Override
+    public List<ProductDtoResponse> searchByCategory(String searchCategory) {
+        List<ProductDtoResponse> productDtoResponseList = new ArrayList<>();
+        try (Connection connection = BaseRepository.getConnectDB();
+             PreparedStatement preparedStatement = connection.prepareStatement(SEARCH_BY_CATEGORY)) {
+            preparedStatement.setInt(1, Integer.parseInt(searchCategory));
+            ResultSet resultSet =  preparedStatement.executeQuery();
+            while (resultSet.next()){
+                int id =Integer.parseInt(resultSet.getString("id"));
+                String name = resultSet.getString("name");
+                double price =Double.parseDouble(resultSet.getString("price"));
+                String description = resultSet.getString("description");
+                String publisher = resultSet.getString("publisher");
+                String nameCategory = resultSet.getString("name_category");
+                ProductDtoResponse productDtoResponse = new ProductDtoResponse(id,name,price,description,publisher,nameCategory);
+                productDtoResponseList.add(productDtoResponse);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException();
+        }
+        return productDtoResponseList;
+    }
+
+    @Override
+    public List<ProductDtoResponse> searchByName(String searchName) {
+        List<ProductDtoResponse> productDtoResponseList = new ArrayList<>();
+        try (Connection connection = BaseRepository.getConnectDB();
+             PreparedStatement preparedStatement = connection.prepareCall(SEARCH_BY_NAME)) {
+            preparedStatement.setString(1, "%" + searchName + "%");
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                int id =Integer.parseInt(resultSet.getString("id"));
+                String name = resultSet.getString("name");
+                double price =Double.parseDouble(resultSet.getString("price"));
+                String description = resultSet.getString("description");
+                String publisher = resultSet.getString("publisher");
+                String nameCategory = resultSet.getString("name_category");
+                ProductDtoResponse productDtoResponse = new ProductDtoResponse(id,name,price,description,publisher,nameCategory);
+                productDtoResponseList.add(productDtoResponse);
+            }
+        } catch (SQLException e) {
+            System.out.println("Lỗi khi gọi searchByName");
+            throw new RuntimeException(e);
+
+        }
+        return productDtoResponseList;
     }
 
 
