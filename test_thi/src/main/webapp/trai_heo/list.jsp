@@ -1,0 +1,198 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: ACER
+  Date: 08/06/2025
+  Time: 11:07 CH
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+<head>
+    <title>Student List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="datatables/css/dataTables.bootstrap5.min.css"/>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #00d4ff);
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(45deg, #0056b3, #0098cc);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #ff6b6b);
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #a71d2a, #cc5252);
+        }
+
+        .search-form .form-select, .search-form .form-control {
+            border-radius: 20px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border-radius: 50%;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <div class="card p-4">
+        <h2 class="mb-4"><i class="bi bi-book"></i> Danh Sách Heo</h2>
+
+        <!-- Form lọc top heo xuất chuồng -->
+        <form action="/traiheo" method="get" class="d-flex align-items-center gap-2">
+            <input name="action" type="hidden" value="top"/>
+            <label class="form-label mb-0 fw-bold">Xem top:</label>
+            <select name="limit" class="form-select w-auto">
+                <option value="10">Top 10 xuất chuồng nặng nhất</option>
+                <option value="20">Top 20 xuất chuồng nặng nhất</option>
+            </select>
+            <button type="submit" class="btn btn-outline-success">Hiển thị</button>
+        </form>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="/traiheo?action=create" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Nhập Heo</a>
+
+            <form class="d-flex search-form" action="/traiheo" method="get">
+                <input type="hidden" name="action" value="search">
+                <input type="text" name="searchName" class="form-control me-2" placeholder="Nhập mã số Heo"
+                       value="${param.searchName}">
+                <select name="searchXuatXu" id="searchXuatXu" class="form-select me-2">
+                    <option value="">Chọn Xuất Xứ</option>
+                    <c:forEach items="${xuatXuList}" var="xuatxu">
+                        <option value="${xuatxu.idXuatXu}">${xuatxu.tenXuatXu}
+                            <c:if test="${param.searchXuatXu == xuatxu.idXuatXu}">selected</c:if>
+                        </option>
+                    </c:forEach>
+                </select>
+                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Tìm kiếm</button>
+            </form>
+
+            <a href="/traiheo" class="btn btn-secondary"><i class="bi bi-list-ul"></i> Hiển thị tất cả</a>
+        </div>
+
+        <table id="tableTraiHeo" class="table table-bordered table-hover text-center">
+            <thead class="table-light">
+            <tr>
+                <th>Mã Số Heo</th>
+                <th>Ngày Nhập Chuồng</th>
+                <th>Trọng Lượng Nhập Chuồng</th>
+                <th>Ngày Xuất Chuồng</th>
+                <th>Trọng Lượng Xuất Chuồng</th>
+                <th>Tên Xuất Xứ</th>
+                <th>Xuất Chuồng</th>
+                <th>Chi Tiết</th>
+                <th>Xóa</th>
+            </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${traiHeoList}" var="traiheo">
+                <tr>
+                    <td>${traiheo.maSoHeo}</td>
+                    <td>${traiheo.ngayNhapChuong}</td>
+                    <td>${traiheo.trongLuongNhapChuong}</td>
+                    <td>${traiheo.ngayXuatChuong}</td>
+                    <td>${traiheo.trongLuongXuatChuong}</td>
+                    <td>${traiheo.tenXuatXu}</td>
+                    <td>
+                        <select class="form-select" id="heoType" name="heoType" required>
+                            <option value="Đã Bán">Đã bán</option>
+                            <option value="Chưa Bán">Chưa Bán</option>
+                        </select>
+                    </td>
+                    <td>
+                        <a href="/traiheo?action=update&id=${traiheo.id}" class="btn btn-warning btn-sm"><i
+                                class="bi bi-pencil"></i> Detail</a>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm delete-btn"
+                                data-id="${traiheo.id}"
+                                data-name="${traiheo.maSoHeo}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Delete
+                        </button>
+                    </td>
+
+                </tr>
+            </c:forEach>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete student <strong id="deleteName"></strong>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form action="/traiheo?action=delete" method="post">
+                    <input type="hidden" name="deleteId" id="deleteId">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#tableTraiHeo').DataTable({
+            "dom": 'rtp',
+            "lengthChange": false,
+            "pageLength": 5,
+            "language": {
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau"
+                },
+                "info": "",
+                "zeroRecords": "Không có dữ liệu",
+                "emptyTable": "Không có Xuất xứ nào",
+                "search": "Tìm kiếm:"
+            }
+        });
+    });
+    $(document).on("click", ".delete-btn", function () {
+        const id = $(this).data("id");
+        const name = $(this).data("name");
+        $("#deleteId").val(id);
+        $("#deleteName").text(name);
+    });
+</script>
+</body>
+</html>
